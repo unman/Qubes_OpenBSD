@@ -42,6 +42,9 @@ sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.6/amd64
 sudo cp ~/QubesIncoming/qubes-builder/install.conf /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/disklabel /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/lighttpd.conf /etc/lighttpd/lighttpd.conf
+sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.6/amd64
+
+sudo chown -R lighttpd:lighttpd /var/www/html/
 
 sudo systemctl start lighttpd
 
