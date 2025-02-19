@@ -54,4 +54,4 @@ qemu-img create -f raw root.img 20G
 
 cd /home/user
 
-qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=n1 -netdev "user,id=n1,hostname=OpenBSD,tftp=tftp,bootfile=auto_install"
+qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=net0 -netdev "user,id=net0,net=192.168.0.0/24,hostname=OpenBSD,tftp=tftp,bootfile=auto_install,hostfwd=tcp::2222-:22"
