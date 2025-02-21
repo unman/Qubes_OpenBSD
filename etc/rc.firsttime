@@ -1,0 +1,16 @@
+#!/bin/sh
+
+## Remove installation artefacts
+echo "https://mirror.freedif.org/pub/OpenBSD/" >  /etc/installurl
+
+rcctl stop resolvd
+rcctl disable resolvd
+
+## Set nameserver for Qubes netwworking
+echo "nameserver 10.139.1.1" > /etc/resolv.conf
+echo "nameserver 10.139.1.2" >> /etc/resolv.conf
+
+## Create SHA256 sum for kernel
+sha256 -h /var/db/kernel.SHA256 /bsd
+
+shutdown -h +1
