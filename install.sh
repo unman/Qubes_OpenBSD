@@ -3,12 +3,20 @@ set -eo pipefail
 
 #### Get the source
 cd
-mkdir build
+mkdir -p /home/user/build/qubeized_images/OpenBSD/
+cp -rv ~/QubesIncoming/qubes-builder/appmenus  /home/user/build
 cd build
 
 wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/SHA256
 wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/SHA256.sig
 wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/install76.iso
+
+mkdir firmware
+cd firmware
+wget --continue --accept "*.tgz" --no-directories --no-parent --recursive http://firmware.openbsd.org/firmware/$(uname -r)/
+
+cd ..
+tar zcf site76.tgz firmware
 
 sudo mount install76.iso /mnt
 mkdir pkgs
@@ -39,7 +47,7 @@ sudo systemctl start tftp
 ### http server
 sudo mkdir -p /var/www/html/pub/OpenBSD/7.6/amd64
 sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.6/amd64
-sudo cp ~/QubesIncoming/qubes-builder/site76.tgz /var/www/html/pub/OpenBSD/7.6/amd64
+sudo cp site76.tgz /var/www/html/pub/OpenBSD/7.6/amd64
 sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.6/amd64
 ls -ln /var/www/html/pub/OpenBSD/7.6/amd64 |sudo tee /var/www/html/pub/OpenBSD/7.6/amd64/index.txt > /dev/null
 sudo cp ~/QubesIncoming/qubes-builder/install.conf /var/www/html/
@@ -52,8 +60,21 @@ sudo systemctl start lighttpd
 
 
 ### Create root.img and install
-qemu-img create -f raw root.img 20G
+qemu-img create -f raw /home/user/build/qubeized_images/OpenBSD/root.img 20G
 
 cd /home/user
 
-qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=net0 -netdev "user,id=net0,net=192.168.0.0/24,hostname=OpenBSD,tftp=tftp,bootfile=auto_install,hostfwd=tcp::2222-:22"
+echo "Kill the qemu-system call with Ctrl+C when install is complete if the VM does not shut down"
+
+qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/qubeized_images/OpenBSD/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=net0 -netdev "user,id=net0,net=192.168.0.0/24,hostname=OpenBSD,tftp=tftp,bootfile=auto_install,hostfwd=tcp::2222-:22"
+
+## 
+#cd ~/QubesIncoming/qubes-builder/
+#cp template.spec ..
+#cp template.conf /home/user/build
+#export TIMESTAMP=$(date +%Y%m%d%H%M)
+#./build-template-rpm /home/user/build OpenBSD 0.2 $TIMESTAMP
+
+
+
+## 

@@ -1,0 +1,29 @@
+#!/bin/sh
+set +o sh
+
+if [ `disklabel sd1 | grep -c 4.2BSD ` -ne 1 ]; then
+  newfs sd1c
+fi
+
+ISMOUNTED=`mount|grep home`
+if [ $ISMOUNTED = "" ]; then
+  mount -A
+fi
+
+if [ ! -d /home/user ]; then
+  mkdir /home/user
+fi
+
+if [ ! -d /home/config ]; then
+  mkdir /home/config
+fi
+
+if [ -e /home/config/mygate ]; then
+  cp /home/config/mygate /etc/mygate
+fi
+
+if [ -e /home/config/myip ]; then
+  QUBES_IP=`cat /home/config/myip`
+  ifconfig xnf0 $QUBES_IP up
+  sh /etc/netstart
+fi

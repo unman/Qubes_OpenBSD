@@ -12,5 +12,6 @@ echo "nameserver 10.139.1.2" >> /etc/resolv.conf
 
 ## Create SHA256 sum for kernel
 sha256 -h /var/db/kernel.SHA256 /bsd
+sed -E -i /home/s^.*\(/home.*\)^/dev/sd1c\ \ \\1^ /etc/fstab
 
-shutdown -h +1
+shutdown -h -p +1
