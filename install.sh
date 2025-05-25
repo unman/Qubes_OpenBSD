@@ -7,20 +7,20 @@ mkdir -p /home/user/build/qubeized_images/OpenBSD/
 cp -rv ~/QubesIncoming/qubes-builder/appmenus  /home/user/build
 cd build
 
-wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/SHA256
-wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/SHA256.sig
-wget https://mirror.freedif.org/pub/OpenBSD/7.6/amd64/install76.iso
+wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/SHA256
+wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/SHA256.sig
+wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/install77.iso
 
 mkdir firmware
 cd firmware
-wget --continue --accept "*.tgz" --no-directories --no-parent --recursive http://firmware.openbsd.org/firmware/$(uname -r)/
+wget --continue --accept "*.tgz" --no-directories --no-parent --recursive http://firmware.openbsd.org/firmware/7.7/
 
 cd ..
-tar zcf site76.tgz firmware
+tar zcf site77.tgz firmware
 
-sudo mount install76.iso /mnt
+sudo mount install77.iso /mnt
 mkdir pkgs
-cp /mnt/7.6/amd64/*.tgz /mnt/7.6/amd64/bsd*  pkgs
+cp /mnt/7.7/amd64/*.tgz /mnt/7.7/amd64/bsd*  pkgs
 sudo umount /mnt
 
 ### tftp server
@@ -45,11 +45,11 @@ chmod 644 /home/user/tftp/etc/random.seed
 sudo systemctl start tftp
 
 ### http server
-sudo mkdir -p /var/www/html/pub/OpenBSD/7.6/amd64
-sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.6/amd64
-sudo cp site76.tgz /var/www/html/pub/OpenBSD/7.6/amd64
-sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.6/amd64
-ls -ln /var/www/html/pub/OpenBSD/7.6/amd64 |sudo tee /var/www/html/pub/OpenBSD/7.6/amd64/index.txt > /dev/null
+sudo mkdir -p /var/www/html/pub/OpenBSD/7.7/amd64
+sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.7/amd64
+sudo cp site77.tgz /var/www/html/pub/OpenBSD/7.7/amd64
+sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.7/amd64
+ls -ln /var/www/html/pub/OpenBSD/7.7/amd64 |sudo tee /var/www/html/pub/OpenBSD/7.7/amd64/index.txt > /dev/null
 sudo cp ~/QubesIncoming/qubes-builder/install.conf /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/disklabel /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/lighttpd.conf /etc/lighttpd/lighttpd.conf
