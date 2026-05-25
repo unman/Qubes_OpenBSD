@@ -1,10 +1,10 @@
 /             1GB-2GB
-swap         80MB–256MB
-/usr          2GB–30GB
+swap        125MB–512MB
+/usr          5GB–30GB
 /home         1GB–300GB
 /tmp        120MB–4GB
 /var         80MB–4GB
 /usr/X11R6  450MB–1GB
-/usr/local    1GB–20GB
+/usr/local    4GB–20GB
 /usr/src      2GB–5GB
-/usr/obj      5GB–6GB
+/usr/obj      4GB–6GB

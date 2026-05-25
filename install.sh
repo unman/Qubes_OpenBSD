@@ -3,24 +3,18 @@ set -eo pipefail
 
 #### Get the source
 cd
-mkdir -p /home/user/build/qubeized_images/OpenBSD/
+mkdir -p /home/user/build/qubeized_images/OpenBSD-7.9/
 cp -rv ~/QubesIncoming/qubes-builder/appmenus  /home/user/build
 cd build
 
-wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/SHA256
-wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/SHA256.sig
-wget https://mirror.freedif.org/pub/OpenBSD/7.7/amd64/install77.iso
+#wget https://mirror.freedif.org/pub/OpenBSD/7.9/amd64/SHA256
+#wget https://mirror.freedif.org/pub/OpenBSD/7.9/amd64/SHA256.sig
+#wget https://mirror.freedif.org/pub/OpenBSD/7.9/amd64/install79.iso
+#cp ~/QubesIncoming/qubes-builder/install79.iso .
 
-mkdir firmware
-cd firmware
-wget --continue --accept "*.tgz" --no-directories --no-parent --recursive http://firmware.openbsd.org/firmware/7.7/
-
-cd ..
-tar zcf site77.tgz firmware
-
-sudo mount install77.iso /mnt
+sudo mount install79.iso /mnt
 mkdir pkgs
-cp /mnt/7.7/amd64/*.tgz /mnt/7.7/amd64/bsd*  pkgs
+cp /mnt/7.9/amd64/*.tgz /mnt/7.9/amd64/bsd*  pkgs
 sudo umount /mnt
 
 ### tftp server
@@ -45,11 +39,11 @@ chmod 644 /home/user/tftp/etc/random.seed
 sudo systemctl start tftp
 
 ### http server
-sudo mkdir -p /var/www/html/pub/OpenBSD/7.7/amd64
-sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.7/amd64
-sudo cp site77.tgz /var/www/html/pub/OpenBSD/7.7/amd64
-sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.7/amd64
-ls -ln /var/www/html/pub/OpenBSD/7.7/amd64 |sudo tee /var/www/html/pub/OpenBSD/7.7/amd64/index.txt > /dev/null
+sudo mkdir -p /var/www/html/pub/OpenBSD/7.9/amd64
+sudo cp pkgs/*  /var/www/html/pub/OpenBSD/7.9/amd64
+sudo cp ~/QubesIncoming/qubes-builder/site79.tgz /var/www/html/pub/OpenBSD/7.9/amd64
+sudo cp SHA256*  /var/www/html/pub/OpenBSD/7.9/amd64
+ls -ln /var/www/html/pub/OpenBSD/7.9/amd64 |sudo tee /var/www/html/pub/OpenBSD/7.9/amd64/index.txt > /dev/null
 sudo cp ~/QubesIncoming/qubes-builder/install.conf /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/disklabel /var/www/html/
 sudo cp ~/QubesIncoming/qubes-builder/lighttpd.conf /etc/lighttpd/lighttpd.conf
@@ -60,20 +54,20 @@ sudo systemctl start lighttpd
 
 
 ### Create root.img and install
-qemu-img create -f raw /home/user/build/qubeized_images/OpenBSD/root.img 20G
+qemu-img create -f raw /home/user/build/qubeized_images/OpenBSD-7.9/root.img 20G
 
 cd /home/user
 
 echo "Kill the qemu-system call with Ctrl+C when install is complete if the VM does not shut down"
 
-qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/qubeized_images/OpenBSD/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=net0 -netdev "user,id=net0,net=192.168.0.0/24,hostname=OpenBSD,tftp=tftp,bootfile=auto_install,hostfwd=tcp::2222-:22"
+qemu-system-x86_64  -smp "cpus=2" -m 2G -drive "file=/home/user/build/qubeized_images/OpenBSD-7.9/root.img,media=disk,format=raw,if=virtio" -device e1000,netdev=net0 -netdev "user,id=net0,net=192.168.0.0/24,hostname=OpenBSD,tftp=tftp,bootfile=auto_install,hostfwd=tcp::2222-:22"
 
 ## 
 #cd ~/QubesIncoming/qubes-builder/
 #cp template.spec ..
 #cp template.conf /home/user/build
 #export TIMESTAMP=$(date +%Y%m%d%H%M)
-#./build-template-rpm /home/user/build OpenBSD 0.2 $TIMESTAMP
+#./build-template-rpm /home/user/build OpenBSD 7.9 $TIMESTAMP
 
 
 
