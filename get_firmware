@@ -1,0 +1,6 @@
+#!/bin/sh
+cd /
+sudo mkdir firmware
+cd /firmware
+sudo wget --continue --accept "*.tgz" --no-directories --no-parent --recursive http://firmware.openbsd.org/firmware/$1/
+
